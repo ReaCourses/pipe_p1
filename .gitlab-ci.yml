@@ -121,10 +121,12 @@ build-staticfiles:
     - source $VENV_PATH/bin/activate
     - echo "🏗️ Сборка статических файлов..."
     - python manage.py collectstatic --noinput
-    - echo "✅ Статические файлы собраны"
+    - echo "📦 Создание архива артефактов для bind mount..."
+    - tar -czf staticfiles.tar.gz -C staticfiles .
+    - echo "✅ Статические файлы собраны и упакованы"
   artifacts:
     paths:
-      - staticfiles/
+      - staticfiles.tar.gz
     expire_in: 1 week
   only:
     - main
