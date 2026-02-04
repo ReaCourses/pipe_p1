@@ -10,6 +10,7 @@ stages:
 # Общие переменные
 variables:
   DJANGO_SETTINGS_MODULE: "shopproject.settings"
+  VENV_PATH: ".venv"
 
 # ============================================
 # STAGE: VALIDATE - Проверка и валидация
@@ -28,22 +29,28 @@ validate-python-syntax:
 validate-django-settings:
   stage: validate
   before_script:
+    - python3 -m venv $VENV_PATH
+    - source $VENV_PATH/bin/activate
     - pip install --upgrade pip
     - pip install -r requirements.txt
   script:
+    - source $VENV_PATH/bin/activate
     - echo "🔍 Проверка настроек Django..."
-    - python3 manage.py check
+    - python manage.py check
     - echo "✅ Настройки Django валидны"
 
 # Проверка миграций Django (без БД)
 validate-migrations:
   stage: validate
   before_script:
+    - python3 -m venv $VENV_PATH
+    - source $VENV_PATH/bin/activate
     - pip install --upgrade pip
     - pip install -r requirements.txt
   script:
+    - source $VENV_PATH/bin/activate
     - echo "🔍 Проверка миграций Django..."
-    - python3 manage.py makemigrations --check --dry-run
+    - python manage.py makemigrations --check --dry-run
     - echo "✅ Миграции валидны"
 
 # ============================================
@@ -54,12 +61,16 @@ validate-migrations:
 lint-flake8:
   stage: lint
   before_script:
+    - python3 -m venv $VENV_PATH
+    - source $VENV_PATH/bin/activate
+    - pip install --upgrade pip
     - pip install flake8
   script:
+    - source $VENV_PATH/bin/activate
     - echo "🔍 Линтинг кода с flake8..."
     - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
     - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics || true
-    - echo "✅ Линтинг flake8 завершен "
+    - echo "✅ Линтинг flake8 завершен"
   allow_failure: true
 
 # ============================================
@@ -70,22 +81,28 @@ lint-flake8:
 test-django:
   stage: test
   before_script:
+    - python3 -m venv $VENV_PATH
+    - source $VENV_PATH/bin/activate
     - pip install --upgrade pip
     - pip install -r requirements.txt
   script:
+    - source $VENV_PATH/bin/activate
     - echo "🧪 Запуск Django тестов..."
-    - python3 manage.py test --verbosity=2
+    - python manage.py test --verbosity=2
     - echo "✅ Тесты пройдены"
 
 # Проверка статических файлов
 test-staticfiles:
   stage: test
   before_script:
+    - python3 -m venv $VENV_PATH
+    - source $VENV_PATH/bin/activate
     - pip install --upgrade pip
     - pip install -r requirements.txt
   script:
+    - source $VENV_PATH/bin/activate
     - echo "🔍 Проверка статических файлов..."
-    - python3 manage.py collectstatic --noinput --dry-run
+    - python manage.py collectstatic --noinput --dry-run
     - echo "✅ Статические файлы проверены"
 
 # ============================================
@@ -96,11 +113,14 @@ test-staticfiles:
 build-staticfiles:
   stage: build
   before_script:
+    - python3 -m venv $VENV_PATH
+    - source $VENV_PATH/bin/activate
     - pip install --upgrade pip
     - pip install -r requirements.txt
   script:
+    - source $VENV_PATH/bin/activate
     - echo "🏗️ Сборка статических файлов..."
-    - python3 manage.py collectstatic --noinput
+    - python manage.py collectstatic --noinput
     - echo "✅ Статические файлы собраны"
   artifacts:
     paths:
