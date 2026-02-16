@@ -24,7 +24,7 @@ jobs:
           source .venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Check Django settings
         run: |
           source .venv/bin/activate
@@ -52,17 +52,18 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-
+      
       - name: Create venv and install libs
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Check Django static files
         run: |
           source .venv/bin/activate
           echo "Проверка статик-файлов Django"
           python3 manage.py collectstatic --noinput --dry-run
           echo "Статик-файлы валидны"
+
